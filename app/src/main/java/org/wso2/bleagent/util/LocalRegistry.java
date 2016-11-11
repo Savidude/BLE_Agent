@@ -8,6 +8,7 @@ import org.wso2.bleagent.util.dto.deviceRegistrationUtils.AgentManagerService;
 public class LocalRegistry {
     private static volatile LocalRegistry mInstance;
 
+    private String url;
     private String username;
     private String password;
     private String profile;
@@ -29,6 +30,14 @@ public class LocalRegistry {
             }
         }
         return mInstance;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
     }
 
     public String getUsername() {

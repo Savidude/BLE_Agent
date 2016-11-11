@@ -22,12 +22,15 @@ import org.altbeacon.beacon.RangeNotifier;
 import org.altbeacon.beacon.Region;
 import org.wso2.bleagent.constants.Constants;
 import org.wso2.bleagent.transport.Client;
+import org.wso2.bleagent.transport.ManagerClient;
 import org.wso2.bleagent.util.EddystoneProperties;
 import org.wso2.bleagent.util.LocalRegistry;
 import org.wso2.bleagent.util.dto.AgentUtil;
 import org.wso2.bleagent.util.dto.deviceRegistrationUtils.Action;
 
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity implements OnDataSendToActivity, BeaconConsumer, RangeNotifier {
     private static final int REQUEST_PERMISSION = 10;
@@ -70,6 +73,8 @@ public class MainActivity extends AppCompatActivity implements OnDataSendToActiv
                 break;
             }
             case Constants.ACTION_ENDPOINT:{
+                String[] endpointAttributes = action.getValue().split(";");
+                ManagerClient.sendRequestToManager(endpointAttributes);
                 break;
             }
         }
@@ -125,6 +130,7 @@ public class MainActivity extends AppCompatActivity implements OnDataSendToActiv
         boolean registered = Client.register(url, username, password);
         if (registered){
             LocalRegistry localRegistry = LocalRegistry.getInstance();
+            localRegistry.setUrl(url);
             localRegistry.setUsername(username);
             localRegistry.setPassword(password);
             //TODO: obtain profile from .properties file

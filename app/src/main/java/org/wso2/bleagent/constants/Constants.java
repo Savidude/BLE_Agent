@@ -12,6 +12,9 @@ public class Constants {
     public final static String TOKEN_ISSUER_CONTEXT = "/oauth2";
     public final static String API_APPLICATION_REGISTRATION_CONTEXT = "/api-application-registration";
 
+    public static final String MANAGER_PORT = "8080";
+    public static final String MANAGER_RESOURCE = "/request_endpoint";
+
     public static final String PROTOCOL_IBEACON = "iBeacon";
     public static final String PROTOCOL_EDDYSTONE = "eddystone";
 
