@@ -13,7 +13,8 @@ public class Constants {
     public final static String API_APPLICATION_REGISTRATION_CONTEXT = "/api-application-registration";
 
     public static final String MANAGER_PORT = "8080";
-    public static final String MANAGER_RESOURCE = "/request_endpoint";
+    public static final String RESOURCE_REQUEST_ENDPOINT = "/request_endpoint";
+    public static final String RESOURCE_DOWNLOAD = "/download";
 
     public static final String PROTOCOL_IBEACON = "iBeacon";
     public static final String PROTOCOL_EDDYSTONE = "eddystone";

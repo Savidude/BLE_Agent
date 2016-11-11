@@ -65,7 +65,7 @@ public class MainActivity extends AppCompatActivity implements OnDataSendToActiv
 
         switch (type){
             case Constants.ACTION_IMAGE:{
-
+                webView.loadUrl(ManagerClient.requestImage(action.getValue()));
                 break;
             }
             case Constants.ACTION_URL:{
@@ -98,14 +98,32 @@ public class MainActivity extends AppCompatActivity implements OnDataSendToActiv
 
     @Override
     public void didRangeBeaconsInRegion(Collection<Beacon> collection, Region region) {
-        for(Beacon beacon: collection){
-            String namespace = beacon.getId1().toString();
-            String instance = beacon.getId2().toString();
+        double closestDistance = 10000;
+        int closestIndex = 0;
 
-            EddystoneProperties properties = new EddystoneProperties();
-            properties.setNamespace(namespace);
-            properties.setInstance(instance);
-            Client.beaconConnect(this, properties);
+        int i = 0;
+        for(Beacon beacon: collection){
+            double distance = beacon.getDistance();
+            if (distance < closestDistance){
+                closestIndex = i;
+                closestDistance = distance;
+            }
+            i++;
+        }
+
+        int j = 0;
+        for (Beacon beacon: collection){
+            if(j==closestIndex){
+                String namespace = beacon.getId1().toString();
+                String instance = beacon.getId2().toString();
+
+                EddystoneProperties properties = new EddystoneProperties();
+                properties.setNamespace(namespace);
+                properties.setInstance(instance);
+                Client.beaconConnect(this, properties);
+                break;
+            }
+            j++;
         }
     }
 

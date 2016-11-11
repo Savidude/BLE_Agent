@@ -5,6 +5,9 @@ import org.wso2.bleagent.constants.Constants;
 import org.wso2.bleagent.transport.executor.ManagerRequestAsyncExecutor;
 import org.wso2.bleagent.util.LocalRegistry;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+
 public class ManagerClient {
 
     public static boolean sendRequestToManager(String[] endpointAttributes){
@@ -16,7 +19,7 @@ public class ManagerClient {
         String newParams = requestParams.replace("$user", LocalRegistry.getInstance().getDeviceId());
         String newAttributes = requestType+";"+requestUrl+";"+newParams;
 
-        String managerUrl = getManagerUrl(LocalRegistry.getInstance().getUrl());
+        String managerUrl = getManagerUrl(LocalRegistry.getInstance().getUrl(), Constants.RESOURCE_REQUEST_ENDPOINT);
 
         ManagerRequestAsyncExecutor executor = new ManagerRequestAsyncExecutor();
         executor.execute(managerUrl, newAttributes);
@@ -24,10 +27,23 @@ public class ManagerClient {
         return status;
     }
 
-    private static String getManagerUrl(String agentUrl){
+    public static String requestImage(String path){
+        String url = null;
+        try {
+            String managerUrl = getManagerUrl(LocalRegistry.getInstance().getUrl(), Constants.RESOURCE_DOWNLOAD);
+            String encodedPath = URLEncoder.encode("path", "UTF-8") + "=" + URLEncoder.encode(path, "UTF-8");
+            url = managerUrl + "?" + encodedPath;
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+
+        return url;
+    }
+
+    private static String getManagerUrl(String agentUrl, String resource){
         String[] agentUrlAttr = agentUrl.split(":");
         String hostUrl = agentUrlAttr[1];
-        String managerUrl = "http:" + hostUrl + ":" + Constants.MANAGER_PORT + Constants.MANAGER_RESOURCE;
+        String managerUrl = "http:" + hostUrl + ":" + Constants.MANAGER_PORT + resource;
         return managerUrl;
     }
 }
