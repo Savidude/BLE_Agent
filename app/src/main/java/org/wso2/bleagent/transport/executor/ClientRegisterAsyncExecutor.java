@@ -86,7 +86,7 @@ public class ClientRegisterAsyncExecutor extends AsyncTask<String, Void, Map<Str
 //        registrationProfile.setClientName("bleAgent: " + deviceId);
 
         try{
-            //Dynamic client registration
+//            Dynamic client registration
             DynamicClientRegistrationService dynamicClientRegistrationService = Feign.builder()
                     .client(disableHostnameVerification).contract(new
                             JAXRSContract()).encoder(new JacksonEncoder()).decoder(new JacksonDecoder())
@@ -107,7 +107,7 @@ public class ClientRegisterAsyncExecutor extends AsyncTask<String, Void, Map<Str
                     .target(TokenIssuerService.class, endpoint + Constants.TOKEN_ISSUER_CONTEXT);
             accessTokenInfo = tokenIssuerService.getToken("password", username, password);
 
-            //API application registration
+//            API application registration
             ApiApplicationRegistrationService apiApplicationRegistrationService = Feign.builder().client(disableHostnameVerification)
                     .requestInterceptor(new OAuthRequestInterceptor(accessTokenInfo.getAccess_token()))
                     .contract(new JAXRSContract()).encoder(new JacksonEncoder()).decoder(new JacksonDecoder())

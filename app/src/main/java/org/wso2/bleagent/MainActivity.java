@@ -25,12 +25,16 @@ import org.wso2.bleagent.transport.Client;
 import org.wso2.bleagent.transport.ManagerClient;
 import org.wso2.bleagent.util.EddystoneProperties;
 import org.wso2.bleagent.util.LocalRegistry;
+import org.wso2.bleagent.util.dto.AccessTokenInfo;
 import org.wso2.bleagent.util.dto.AgentUtil;
 import org.wso2.bleagent.util.dto.deviceRegistrationUtils.Action;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 
 public class MainActivity extends AppCompatActivity implements OnDataSendToActivity, BeaconConsumer, RangeNotifier {
     private static final int REQUEST_PERMISSION = 10;
@@ -98,7 +102,7 @@ public class MainActivity extends AppCompatActivity implements OnDataSendToActiv
 
     @Override
     public void didRangeBeaconsInRegion(Collection<Beacon> collection, Region region) {
-        double closestDistance = 10000;
+        double closestDistance = 1000;
         int closestIndex = 0;
 
         int i = 0;
@@ -140,25 +144,34 @@ public class MainActivity extends AppCompatActivity implements OnDataSendToActiv
     }
 
     private void serverConnect(){
-        //TODO obtain following values from .properties file
-        String url = "https://10.10.10.11:9443";
-        String username = "admin";
-        String password = "admin";
+        try {
+            Properties properties = new Properties();
+            InputStream inputStream = getBaseContext().getAssets().open("deviceConfig.properties");
+            properties.load(inputStream);
 
-        boolean registered = Client.register(url, username, password);
-        if (registered){
-            LocalRegistry localRegistry = LocalRegistry.getInstance();
-            localRegistry.setUrl(url);
-            localRegistry.setUsername(username);
-            localRegistry.setPassword(password);
-            //TODO: obtain profile from .properties file
-            localRegistry.setProfile("1");
+            String url = properties.getProperty("https-ep");
+            String profile = properties.getProperty("device-name");
 
-            startEddystoneMonitoring();
-            statusText.setText("Scanning for nearby items...");
-        }else {
-            statusText.setText("Could not connect to server");
-            spinner.setVisibility(View.INVISIBLE);
+            //TODO obtain following values from .properties file
+            String username = "admin";
+            String password = "admin";
+
+            boolean registered = Client.register(url, username, password);
+            if (registered){
+                LocalRegistry localRegistry = LocalRegistry.getInstance();
+                localRegistry.setUrl(url);
+                localRegistry.setUsername(username);
+                localRegistry.setPassword(password);
+                localRegistry.setProfile(profile);
+
+                startEddystoneMonitoring();
+                statusText.setText("Scanning for nearby items...");
+            }else {
+                statusText.setText("Could not connect to server");
+                spinner.setVisibility(View.INVISIBLE);
+            }
+        } catch (IOException e) {
+//            e.printStackTrace();
         }
     }
 
