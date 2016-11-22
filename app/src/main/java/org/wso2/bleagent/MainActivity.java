@@ -36,6 +36,7 @@ import java.util.Properties;
 
 public class MainActivity extends AppCompatActivity implements OnDataSendToActivity, BeaconConsumer, RangeNotifier {
     private static final int REQUEST_PERMISSION = 10;
+    private static final long MAX_CONN_TIME = 5000;
 
     private ProgressBar spinner;
     private TextView statusText;
@@ -214,7 +215,7 @@ public class MainActivity extends AppCompatActivity implements OnDataSendToActiv
         for(int i=0; i<recentBeacons.size(); i++){
             //Selecting beacons connected more than 5 seconds ago
             long timeDifference = properties.getConnectedTime() - recentBeacons.get(i).getConnectedTime();
-            if(timeDifference > 5000){
+            if(timeDifference > MAX_CONN_TIME){
                 oldBeacons.add(i);
             }else if (properties.equals(recentBeacons.get(i))){
                 status = false;
@@ -223,8 +224,8 @@ public class MainActivity extends AppCompatActivity implements OnDataSendToActiv
         }
 
         //Renoving beacons connected more than 5 seconds ago
-        for(int j=0; j<oldBeacons.size(); j++){
-            recentBeacons.remove(j);
+        for(int j=oldBeacons.size()-1; j>0; j--){
+            recentBeacons.remove(oldBeacons.get(j));
         }
 
         return status;
