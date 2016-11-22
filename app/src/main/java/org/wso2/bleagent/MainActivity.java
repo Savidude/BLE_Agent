@@ -2,13 +2,16 @@ package org.wso2.bleagent;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.RemoteException;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -60,6 +63,17 @@ public class MainActivity extends AppCompatActivity implements OnDataSendToActiv
         statusText.setVisibility(View.VISIBLE);
 
         webView = (WebView) findViewById(R.id.webView);
+        this.webView.setWebViewClient(new WebViewClient(){
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+                boolean status = false;
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    view.loadUrl(request.getUrl().toString());
+                    status = true;
+                }
+                return status;
+            }
+        });
 
         serverConnect();
     }
@@ -213,19 +227,25 @@ public class MainActivity extends AppCompatActivity implements OnDataSendToActiv
         ArrayList<Integer> oldBeacons = new ArrayList<>();
 
         for(int i=0; i<recentBeacons.size(); i++){
-            //Selecting beacons connected more than 5 seconds ago
-            long timeDifference = properties.getConnectedTime() - recentBeacons.get(i).getConnectedTime();
-            if(timeDifference > MAX_CONN_TIME){
-                oldBeacons.add(i);
-            }else if (properties.equals(recentBeacons.get(i))){
+            //If in the most recently detected beacon and it is equal to the currently detected beacon
+            if((i==recentBeacons.size()-1) && properties.equals(recentBeacons.get(i))){
                 status = false;
-                break;
+            }else{
+                //Selecting beacons connected more than 5 seconds ago
+                long timeDifference = properties.getConnectedTime() - recentBeacons.get(i).getConnectedTime();
+                if(timeDifference > MAX_CONN_TIME){
+                    oldBeacons.add(i);
+                }else if (properties.equals(recentBeacons.get(i))){
+                    status = false;
+                    break;
+                }
             }
         }
 
-        //Renoving beacons connected more than 5 seconds ago
+        //Removing beacons connected more than 5 seconds ago
         for(int j=oldBeacons.size()-1; j>0; j--){
-            recentBeacons.remove(oldBeacons.get(j));
+            int recentIndex = oldBeacons.get(j);
+            recentBeacons.remove(recentIndex);
         }
 
         return status;
