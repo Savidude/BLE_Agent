@@ -15,9 +15,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 
-/**
- * Created by wso2123 on 11/10/16.
- */
 public class ManagerRequestAsyncExecutor extends AsyncTask<String, Void, Boolean> {
     @Override
     protected Boolean doInBackground(String... strings) {
@@ -57,9 +54,9 @@ public class ManagerRequestAsyncExecutor extends AsyncTask<String, Void, Boolean
             connection.disconnect();
 
         } catch (MalformedURLException e) {
-            e.printStackTrace();
+            //Do nothing
         } catch (IOException e) {
-            e.printStackTrace();
+            //Do nothing
         }
 
         return status;

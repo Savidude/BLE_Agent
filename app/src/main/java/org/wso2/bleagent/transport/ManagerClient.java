@@ -37,7 +37,7 @@ public class ManagerClient {
             String encodedPath = URLEncoder.encode("path", "UTF-8") + "=" + URLEncoder.encode(path, "UTF-8");
             url = managerUrl + "?" + encodedPath;
         } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
+            //Do nothing
         }
 
         return url;

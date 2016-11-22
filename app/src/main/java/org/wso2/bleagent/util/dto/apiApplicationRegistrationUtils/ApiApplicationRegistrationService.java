@@ -6,9 +6,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-/**
- * Created by wso2123 on 10/7/16.
- */
 @Path("/register")
 public interface ApiApplicationRegistrationService {
     /**

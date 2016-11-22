@@ -2,9 +2,6 @@ package org.wso2.bleagent.util;
 
 import org.wso2.bleagent.constants.Constants;
 
-/**
- * Created by wso2123 on 11/8/16.
- */
 public class EddystoneProperties extends BeaconProperties {
     private String namespace;
     private String instance;

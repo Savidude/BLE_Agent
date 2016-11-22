@@ -1,8 +1,5 @@
 package org.wso2.bleagent.util.dto;
 
-/**
- * Created by wso2123 on 10/7/16.
- */
 public class AccessTokenInfo {
     public String token_type;
     public String expires_in;

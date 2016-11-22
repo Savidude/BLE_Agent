@@ -16,8 +16,6 @@ import org.altbeacon.beacon.Beacon;
 import org.altbeacon.beacon.BeaconConsumer;
 import org.altbeacon.beacon.BeaconManager;
 import org.altbeacon.beacon.BeaconParser;
-import org.altbeacon.beacon.Identifier;
-import org.altbeacon.beacon.MonitorNotifier;
 import org.altbeacon.beacon.RangeNotifier;
 import org.altbeacon.beacon.Region;
 import org.wso2.bleagent.constants.Constants;
@@ -26,7 +24,6 @@ import org.wso2.bleagent.transport.ManagerClient;
 import org.wso2.bleagent.util.BeaconProperties;
 import org.wso2.bleagent.util.EddystoneProperties;
 import org.wso2.bleagent.util.LocalRegistry;
-import org.wso2.bleagent.util.dto.AccessTokenInfo;
 import org.wso2.bleagent.util.dto.AgentUtil;
 import org.wso2.bleagent.util.dto.deviceRegistrationUtils.Action;
 
@@ -34,9 +31,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 
 public class MainActivity extends AppCompatActivity implements OnDataSendToActivity, BeaconConsumer, RangeNotifier {

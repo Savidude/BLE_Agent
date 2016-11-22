@@ -10,9 +10,6 @@ import org.wso2.bleagent.util.EddystoneProperties;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
-/**
- * Created by wso2123 on 11/8/16.
- */
 public class Client {
     private static final String STATUS = "status";
 
@@ -27,9 +24,9 @@ public class Client {
 
             status = responseStatus.contains(Constants.Request.REQUEST_SUCCESSFUL);
         } catch (InterruptedException e) {
-//            e.printStackTrace();
+            //Do nothing
         } catch (ExecutionException e) {
-//            e.printStackTrace();
+            //Do nothing
         } catch (NullPointerException e){
 
         }

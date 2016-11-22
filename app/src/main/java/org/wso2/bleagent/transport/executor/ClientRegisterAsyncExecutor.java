@@ -34,9 +34,6 @@ import feign.jackson.JacksonDecoder;
 import feign.jackson.JacksonEncoder;
 import feign.jaxrs.JAXRSContract;
 
-/**
- * Created by wso2123 on 11/8/16.
- */
 public class ClientRegisterAsyncExecutor extends AsyncTask<String, Void, Map<String, String>> {
     private static final String STATUS = "status";
 
@@ -132,7 +129,6 @@ public class ClientRegisterAsyncExecutor extends AsyncTask<String, Void, Map<Str
                 responseMap.put(STATUS, "400");
             }
         }catch (FeignException e){
-//            e.printStackTrace();
             responseMap.put(STATUS, String.valueOf(e.status()));
             return responseMap;
         }

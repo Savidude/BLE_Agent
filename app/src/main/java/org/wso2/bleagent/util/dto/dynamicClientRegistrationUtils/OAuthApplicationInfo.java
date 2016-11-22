@@ -1,8 +1,5 @@
 package org.wso2.bleagent.util.dto.dynamicClientRegistrationUtils;
 
-/**
- * Created by wso2123 on 10/7/16.
- */
 public class OAuthApplicationInfo {
     public String client_id;
     public String client_name;

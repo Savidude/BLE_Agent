@@ -1,8 +1,5 @@
 package org.wso2.bleagent.constants;
 
-/**
- * Created by wso2123 on 11/8/16.
- */
 public class Constants {
     public static final String DEVICE_TYPE = "bleAgent";
 

@@ -6,9 +6,6 @@ import android.telephony.TelephonyManager;
 
 import java.util.UUID;
 
-/**
- * Created by wso2123 on 11/9/16.
- */
 public class AgentUtil {
 
     //http://stackoverflow.com/questions/2785485/is-there-a-unique-android-device-id

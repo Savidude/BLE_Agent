@@ -4,9 +4,6 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
 
-/**
- * Created by wso2123 on 11/8/16.
- */
 public interface AgentManagerService {
     @Path("device/eddystone/connect")
     @POST

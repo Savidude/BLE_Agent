@@ -1,8 +1,5 @@
 package org.wso2.bleagent.util.dto.apiApplicationRegistrationUtils;
 
-/**
- * Created by wso2123 on 10/7/16.
- */
 public class ApiRegistrationProfile {
     public String applicationName;
     public String tags[];

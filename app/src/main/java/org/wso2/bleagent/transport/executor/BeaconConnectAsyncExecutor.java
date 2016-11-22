@@ -14,9 +14,7 @@ import java.util.Map;
 
 import feign.FeignException;
 
-/**
- * Created by wso2123 on 11/8/16.
- */
+
 public class BeaconConnectAsyncExecutor extends AsyncTask<String, Void, Map<String, String>> {
     private static final String STATUS = "status";
 
@@ -48,7 +46,6 @@ public class BeaconConnectAsyncExecutor extends AsyncTask<String, Void, Map<Stri
                 }
             }
         }catch (FeignException e){
-            e.printStackTrace();
             responseMap.put(STATUS, String.valueOf(e.status()));
         }
 

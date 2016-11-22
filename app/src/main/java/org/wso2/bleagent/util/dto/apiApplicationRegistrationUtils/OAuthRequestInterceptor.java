@@ -5,9 +5,6 @@ import feign.RequestTemplate;
 
 import static feign.Util.checkNotNull;
 
-/**
- * Created by wso2123 on 10/7/16.
- */
 public class OAuthRequestInterceptor implements RequestInterceptor {
 
     private final String headerValue;
