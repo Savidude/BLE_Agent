@@ -16,7 +16,10 @@ public class ManagerClient {
         String requestType = endpointAttributes[0];
         String requestUrl = endpointAttributes[1];
         String requestParams = endpointAttributes[2];
+
+        //Setting the params set by owner for user and timestamp
         String newParams = requestParams.replace("$user", LocalRegistry.getInstance().getDeviceId());
+        newParams = newParams.replace("$timestamp", Long.toString(System.currentTimeMillis()));
         String newAttributes = requestType+";"+requestUrl+";"+newParams;
 
         String managerUrl = getManagerUrl(LocalRegistry.getInstance().getUrl(), Constants.RESOURCE_REQUEST_ENDPOINT);

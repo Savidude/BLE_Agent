@@ -28,4 +28,12 @@ public class EddystoneProperties extends BeaconProperties {
     public void setInstance(String instance) {
         this.instance = instance;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        EddystoneProperties properties = (EddystoneProperties)obj;
+        boolean isNamespaceEqual = this.getNamespace().equals(properties.getNamespace());
+        boolean isInstanceEqual = this.getInstance().equals(properties.getInstance());
+        return isNamespaceEqual && isInstanceEqual;
+    }
 }

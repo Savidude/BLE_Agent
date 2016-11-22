@@ -23,6 +23,7 @@ import org.altbeacon.beacon.Region;
 import org.wso2.bleagent.constants.Constants;
 import org.wso2.bleagent.transport.Client;
 import org.wso2.bleagent.transport.ManagerClient;
+import org.wso2.bleagent.util.BeaconProperties;
 import org.wso2.bleagent.util.EddystoneProperties;
 import org.wso2.bleagent.util.LocalRegistry;
 import org.wso2.bleagent.util.dto.AccessTokenInfo;
@@ -31,8 +32,10 @@ import org.wso2.bleagent.util.dto.deviceRegistrationUtils.Action;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -44,12 +47,14 @@ public class MainActivity extends AppCompatActivity implements OnDataSendToActiv
     private WebView webView;
 
     private BeaconManager beaconManager;
+    private List<BeaconProperties> recentBeacons;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         requestReadPhoneStatePermissions();
+        recentBeacons = new ArrayList<>();
 
         spinner = (ProgressBar) findViewById(R.id.spinner);
         spinner.setVisibility(View.VISIBLE);
@@ -124,8 +129,13 @@ public class MainActivity extends AppCompatActivity implements OnDataSendToActiv
                 EddystoneProperties properties = new EddystoneProperties();
                 properties.setNamespace(namespace);
                 properties.setInstance(instance);
-                Client.beaconConnect(this, properties);
-                break;
+                properties.setConnectedTime(System.currentTimeMillis());
+
+                if(checkBeaconHistory(properties)){
+                    recentBeacons.add(properties);
+                    Client.beaconConnect(this, properties);
+                    break;
+                }
             }
             j++;
         }
@@ -150,7 +160,7 @@ public class MainActivity extends AppCompatActivity implements OnDataSendToActiv
             properties.load(inputStream);
 
             String url = properties.getProperty("https-ep");
-            String profile = properties.getProperty("device-name");
+            String profile = properties.getProperty("profile-id");
 
             //TODO obtain following values from .properties file
             String username = "admin";
@@ -200,5 +210,28 @@ public class MainActivity extends AppCompatActivity implements OnDataSendToActiv
             deviceId = AgentUtil.generateDeviceId(getBaseContext(), getContentResolver());
         }
         LocalRegistry.getInstance().setDeviceId(deviceId);
+    }
+
+    private boolean checkBeaconHistory(BeaconProperties properties){
+        boolean status = true;
+        ArrayList<Integer> oldBeacons = new ArrayList<>();
+
+        for(int i=0; i<recentBeacons.size(); i++){
+            //Selecting beacons connected more than 5 seconds ago
+            long timeDifference = properties.getConnectedTime() - recentBeacons.get(i).getConnectedTime();
+            if(timeDifference > 5000){
+                oldBeacons.add(i);
+            }else if (properties.equals(recentBeacons.get(i))){
+                status = false;
+                break;
+            }
+        }
+
+        //Renoving beacons connected more than 5 seconds ago
+        for(int j=0; j<oldBeacons.size(); j++){
+            recentBeacons.remove(j);
+        }
+
+        return status;
     }
 }
