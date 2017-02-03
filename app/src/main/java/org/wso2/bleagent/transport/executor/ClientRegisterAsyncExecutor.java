@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 import org.wso2.bleagent.constants.Constants;
 import org.wso2.bleagent.util.LocalRegistry;
 import org.wso2.bleagent.util.dto.AccessTokenInfo;
+import org.wso2.bleagent.util.dto.apiApplicationRegistrationUtils.ApiApplicationKey;
 import org.wso2.bleagent.util.dto.apiApplicationRegistrationUtils.ApiApplicationRegistrationService;
 import org.wso2.bleagent.util.dto.apiApplicationRegistrationUtils.ApiRegistrationProfile;
 import org.wso2.bleagent.util.dto.apiApplicationRegistrationUtils.OAuthRequestInterceptor;
@@ -36,6 +37,8 @@ import feign.jaxrs.JAXRSContract;
 
 public class ClientRegisterAsyncExecutor extends AsyncTask<String, Void, Map<String, String>> {
     private static final String STATUS = "status";
+    private final String PASSWORD_GRANT_TYPE = "password";
+    private final String SCOPE = "perm:android-sense:enroll";
 
     TrustManager[] trustAllCerts = new TrustManager[]{
             new X509TrustManager() {
@@ -80,43 +83,26 @@ public class ClientRegisterAsyncExecutor extends AsyncTask<String, Void, Map<Str
         responseMap.put(STATUS, "200");
 
         AccessTokenInfo accessTokenInfo = null;
-//        registrationProfile.setClientName("bleAgent: " + deviceId);
 
         try{
-//            Dynamic client registration
-            DynamicClientRegistrationService dynamicClientRegistrationService = Feign.builder()
-                    .client(disableHostnameVerification).contract(new
-                            JAXRSContract()).encoder(new JacksonEncoder()).decoder(new JacksonDecoder())
-                    .target(DynamicClientRegistrationService.class, endpoint + Constants.DCR_CONTEXT);
-            RegistrationProfile registrationProfile = new RegistrationProfile();
-            registrationProfile.setOwner(username);
-            registrationProfile.setClientName("bleAgent: " + deviceId);
-            registrationProfile.setCallbackUrl("");
-            registrationProfile.setGrantType("password refresh_token client_credentials");
-            registrationProfile.setApplicationType("device");
-            registrationProfile.setTokenScope("production");
-            OAuthApplicationInfo oAuthApplicationInfo = dynamicClientRegistrationService.register(registrationProfile);;
-
-            //Password grant type
-            TokenIssuerService tokenIssuerService = Feign.builder().client(disableHostnameVerification).requestInterceptor(
-                    new BasicAuthRequestInterceptor(oAuthApplicationInfo.getClient_id(), oAuthApplicationInfo.getClient_secret()))
-                    .contract(new JAXRSContract()).encoder(new JacksonEncoder()).decoder(new JacksonDecoder())
-                    .target(TokenIssuerService.class, endpoint + Constants.TOKEN_ISSUER_CONTEXT);
-            accessTokenInfo = tokenIssuerService.getToken("password", username, password);
-
-//            API application registration
+            //            API application registration
             ApiApplicationRegistrationService apiApplicationRegistrationService = Feign.builder().client(disableHostnameVerification)
-                    .requestInterceptor(new OAuthRequestInterceptor(accessTokenInfo.getAccess_token()))
+                    .requestInterceptor(new BasicAuthRequestInterceptor(username, password))
                     .contract(new JAXRSContract()).encoder(new JacksonEncoder()).decoder(new JacksonDecoder())
                     .target(ApiApplicationRegistrationService.class, endpoint + Constants.API_APPLICATION_REGISTRATION_CONTEXT);
             ApiRegistrationProfile apiRegistrationProfile = new ApiRegistrationProfile();
-            apiRegistrationProfile.setApplicationName("bleAgent: " + deviceId);
-            apiRegistrationProfile.setConsumerKey(oAuthApplicationInfo.getClient_id());
-            apiRegistrationProfile.setConsumerSecret(oAuthApplicationInfo.getClient_secret());
+            apiRegistrationProfile.setApplicationName("bleagent_" + deviceId);
             apiRegistrationProfile.setIsAllowedToAllDomains(false);
-            apiRegistrationProfile.setIsMappingAnExistingOAuthApp(true);
+            apiRegistrationProfile.setIsMappingAnExistingOAuthApp(false);
             apiRegistrationProfile.setTags(new String[]{Constants.DEVICE_TYPE});
-            apiApplicationRegistrationService.register(apiRegistrationProfile);
+            ApiApplicationKey apiApplicationKey = apiApplicationRegistrationService.register(apiRegistrationProfile);
+
+            //PasswordGrantType
+            TokenIssuerService tokenIssuerService = Feign.builder().client(disableHostnameVerification).requestInterceptor(
+                    new BasicAuthRequestInterceptor(apiApplicationKey.getConsumerKey(), apiApplicationKey.getConsumerSecret()))
+                    .contract(new JAXRSContract()).encoder(new JacksonEncoder()).decoder(new JacksonDecoder())
+                    .target(TokenIssuerService.class, endpoint);
+            accessTokenInfo = tokenIssuerService.getToken(PASSWORD_GRANT_TYPE, username, password, "device_" + deviceId, SCOPE);
 
             //Device registration
             AgentManagerService agentManagerService = Feign.builder().client(disableHostnameVerification)

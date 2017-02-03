@@ -242,6 +242,15 @@ public class MainActivity extends AppCompatActivity implements OnDataSendToActiv
             }
         }
 
+        //Hardcoded removal of beacon H (testing purposes only)
+        //TODO: Remove this code
+        EddystoneProperties eddystoneProperties = new EddystoneProperties();
+        eddystoneProperties.setNamespace("0xedd1ebeac04e5defa017");
+        eddystoneProperties.setInstance("0x2a8379c199c0");
+        if(properties.equals(eddystoneProperties)){
+            status = false;
+        }
+
         //Removing beacons connected more than 5 seconds ago
         for(int j=oldBeacons.size()-1; j>0; j--){
             int recentIndex = oldBeacons.get(j);
