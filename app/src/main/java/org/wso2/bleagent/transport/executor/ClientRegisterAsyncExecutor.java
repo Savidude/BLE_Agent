@@ -38,7 +38,7 @@ import feign.jaxrs.JAXRSContract;
 public class ClientRegisterAsyncExecutor extends AsyncTask<String, Void, Map<String, String>> {
     private static final String STATUS = "status";
     private final String PASSWORD_GRANT_TYPE = "password";
-    private final String SCOPE = "perm:android-sense:enroll";
+    private final String SCOPE = "perm:bleagent:enroll";
 
     TrustManager[] trustAllCerts = new TrustManager[]{
             new X509TrustManager() {
